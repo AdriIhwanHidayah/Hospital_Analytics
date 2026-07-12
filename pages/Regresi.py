@@ -72,7 +72,7 @@ st.divider()
 # Scatter Aktual vs Prediksi
 # ==========================
 
-st.subheader("Penagihan Aktual vs Prediksig")
+st.subheader("Penagihan Aktual vs Prediksi")
 
 fig = px.scatter(
     df,
