@@ -11,7 +11,7 @@ st.title("Hospital Analytics")
 st.markdown("""
 ## Selamat Datang
 
-Aplikasi **Hospital Analytics** merupakan dashboard analitik yang dirancang untuk membantu proses eksplorasi dan analisis data pasien rumah sakit. Dashboard ini menyajikan informasi dalam bentuk visualisasi interaktif serta hasil penerapan beberapa metode Machine Learning untuk mendukung pengambilan keputusan berbasis data.
+Aplikasi Hospital Analytics merupakan dashboard analitik yang dirancang untuk membantu proses eksplorasi dan analisis data pasien rumah sakit. Dashboard ini menyajikan informasi dalam bentuk visualisasi interaktif serta hasil penerapan beberapa metode Machine Learning untuk mendukung pengambilan keputusan berbasis data.
 
 ### Menu Utama
 
