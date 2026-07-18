@@ -1,7 +1,7 @@
-AKBARRR_CRASH_SENGALA_BIAR_RESET
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import time
 
 from utils import load_data
 from models.classification import train_classifier
@@ -19,8 +19,9 @@ algoritma **Random Forest** berdasarkan karakteristik klinis dan administrasi pa
 """)
 df = load_data()
 
-# Mengambil hasil model dan feature_names dari fungsi training
-model, feature_names, y_test, pred, accuracy, cm, report = train_classifier(df)
+# KITA PAKSA JEBOL CACHE DENGAN TIMESTAMP DETIK INI JUGA
+refresh_token = time.time()
+model, feature_names, y_test, pred, accuracy, cm, report = train_classifier(df, _force_refresh=refresh_token)
 
 # =======================================
 # KPI
@@ -83,7 +84,7 @@ selected_condition = col2.selectbox("Kondisi Medis Pasien", options=list(kondisi
 condition_encoded = kondisi_medis_dict[selected_condition]
 
 if st.button("Rekomendasikan Obat"):
-    # PERBAIKAN: Dibungkus ke DataFrame dengan nama kolom yang identik dengan urutan data training
+    # Mengirimkan DataFrame terstruktur dengan nama kolom yang sangat presisi
     input_pasien = pd.DataFrame(
         [[
             age,
@@ -95,6 +96,6 @@ if st.button("Rekomendasikan Obat"):
         columns=["Age", "Billing Amount", "Stay_Duration", "Insurance_Encoded", "Condition_Encoded"]
     )
 
-    # Melakukan prediksi dengan DataFrame terstruktur
+    # Melakukan prediksi menggunakan model baru yang bersih dari cache
     hasil = model.predict(input_pasien)
     st.success(f"Rekomendasi Obat Berdasarkan Model : **{hasil[0]}**")

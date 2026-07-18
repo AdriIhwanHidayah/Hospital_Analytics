@@ -6,7 +6,8 @@ from sklearn.metrics import (
     confusion_matrix
 )
 
-def train_classifier(df):
+# Tambahkan parameter _force_refresh agar cache otomatis jebol jika nilainya berubah
+def train_classifier(df, _force_refresh=None):
     # Daftarkan nama fitur murni dalam list
     feature_names = [
         "Age",
