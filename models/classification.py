@@ -5,22 +5,23 @@ from sklearn.metrics import (
     classification_report,
     confusion_matrix
 )
+import numpy as np
 
 def train_classifier(df):
-
-    # Memasukkan Condition_Encoded sebagai fitur utama pemilih obat (Total 5 Fitur)
-    X = df[
-        [
-            "Age",
-            "Billing Amount",
-            "Stay_Duration",
-            "Insurance_Encoded",
-            "Condition_Encoded"
-        ]
+    # Daftarkan nama fitur untuk keperluan grafik Feature Importance nanti
+    feature_names = [
+        "Age",
+        "Billing Amount",
+        "Stay_Duration",
+        "Insurance_Encoded",
+        "Condition_Encoded"
     ]
 
-    # Target diganti menjadi Medication (Obat)
-    y = df["Medication"]
+    # PERBAIKAN: Menggunakan .to_numpy(dtype=np.float32) untuk X agar PyArrow terkonversi sempurna ke NumPy
+    X = df[feature_names].to_numpy(dtype=np.float32)
+    
+    # PERBAIKAN: Mengonversi y menjadi array string/object NumPy murni untuk menghindari error indexing PyArrow
+    y = df["Medication"].astype(str).to_numpy()
 
     X_train, X_test, y_train, y_test = train_test_split(
         X,
@@ -37,15 +38,9 @@ def train_classifier(df):
     model.fit(X_train, y_train)
 
     pred = model.predict(X_test)
-
     accuracy = accuracy_score(y_test, pred)
-
     cm = confusion_matrix(y_test, pred)
+    report = classification_report(y_test, pred, output_dict=True)
 
-    report = classification_report(
-        y_test,
-        pred,
-        output_dict=True
-    )
-
-    return model, X_test, y_test, pred, accuracy, cm, report
+    # Kita kembalikan feature_names agar file frontend bisa menggambar grafik dengan benar
+    return model, feature_names, y_test, pred, accuracy, cm, report
