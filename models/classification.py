@@ -5,10 +5,9 @@ from sklearn.metrics import (
     classification_report,
     confusion_matrix
 )
-import numpy as np
 
 def train_classifier(df):
-    # Daftarkan nama fitur untuk keperluan grafik Feature Importance nanti
+    # Daftarkan nama fitur murni dalam list
     feature_names = [
         "Age",
         "Billing Amount",
@@ -17,11 +16,11 @@ def train_classifier(df):
         "Condition_Encoded"
     ]
 
-    # PERBAIKAN: Menggunakan .to_numpy(dtype=np.float32) untuk X agar PyArrow terkonversi sempurna ke NumPy
-    X = df[feature_names].to_numpy(dtype=np.float32)
+    # Ambil data dalam bentuk DataFrame murni (bukan NumPy Array)
+    X = df[feature_names].copy()
     
-    # PERBAIKAN: Mengonversi y menjadi array string/object NumPy murni untuk menghindari error indexing PyArrow
-    y = df["Medication"].astype(str).to_numpy()
+    # Target (Medication) dikonversi ke tipe string biasa demi keamanan backend data
+    y = df["Medication"].astype(str)
 
     X_train, X_test, y_train, y_test = train_test_split(
         X,
@@ -42,5 +41,5 @@ def train_classifier(df):
     cm = confusion_matrix(y_test, pred)
     report = classification_report(y_test, pred, output_dict=True)
 
-    # Kita kembalikan feature_names agar file frontend bisa menggambar grafik dengan benar
+    # Mengembalikan objek model dan kelengkapannya
     return model, feature_names, y_test, pred, accuracy, cm, report

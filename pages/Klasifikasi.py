@@ -18,7 +18,7 @@ algoritma **Random Forest** berdasarkan karakteristik klinis dan administrasi pa
 """)
 df = load_data()
 
-# Mengambil feature_names dari backend
+# Mengambil hasil model dan feature_names dari fungsi training
 model, feature_names, y_test, pred, accuracy, cm, report = train_classifier(df)
 
 # =======================================
@@ -82,14 +82,18 @@ selected_condition = col2.selectbox("Kondisi Medis Pasien", options=list(kondisi
 condition_encoded = kondisi_medis_dict[selected_condition]
 
 if st.button("Rekomendasikan Obat"):
-    # Kirim langsung dalam bentuk Array List tanpa menyertakan nama kolom dataframe
-    input_pasien = [[
-        age,
-        billing,
-        stay,
-        insurance,
-        condition_encoded
-    ]]
+    # PERBAIKAN: Dibungkus ke DataFrame dengan nama kolom yang identik dengan urutan data training
+    input_pasien = pd.DataFrame(
+        [[
+            age,
+            billing,
+            stay,
+            insurance,
+            condition_encoded
+        ]], 
+        columns=["Age", "Billing Amount", "Stay_Duration", "Insurance_Encoded", "Condition_Encoded"]
+    )
 
+    # Melakukan prediksi dengan DataFrame terstruktur
     hasil = model.predict(input_pasien)
     st.success(f"Rekomendasi Obat Berdasarkan Model : **{hasil[0]}**")
