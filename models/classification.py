@@ -8,16 +8,19 @@ from sklearn.metrics import (
 
 def train_classifier(df):
 
+    # Memasukkan Condition_Encoded sebagai fitur utama pemilih obat (Total 5 Fitur)
     X = df[
         [
             "Age",
             "Billing Amount",
             "Stay_Duration",
-            "Insurance_Encoded"
+            "Insurance_Encoded",
+            "Condition_Encoded"
         ]
     ]
 
-    y = df["Medical Condition"]
+    # Target diganti menjadi Medication (Obat)
+    y = df["Medication"]
 
     X_train, X_test, y_train, y_test = train_test_split(
         X,

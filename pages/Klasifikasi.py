@@ -6,16 +6,16 @@ from utils import load_data
 from models.classification import train_classifier
 
 st.set_page_config(
-    page_title="Klasifikasi",
+    page_title="Klasifikasi Rekomendasi Obat",
     layout="wide"
 )
 
-st.title("🧠 Analisis Klasifikasi Random Forest")
+# Ganti Judul Utama
+st.title("🧠 Analisis Klasifikasi Prediksi Obat Pasien (Random Forest)")
 
 st.markdown("""
-Halaman ini menampilkan hasil klasifikasi kondisi medis pasien menggunakan
-algoritma **Random Forest** berdasarkan karakteristik pasien seperti umur,
-lama rawat, biaya perawatan, dan jenis asuransi.
+Halaman ini menampilkan hasil prediksi **Rekomendasi Obat (Medication)** pasien menggunakan
+algoritma **Random Forest** berdasarkan karakteristik klinis dan administrasi pasien.
 """)
 df = load_data()
 
@@ -33,8 +33,8 @@ c1.metric(
 )
 
 c2.metric(
-    "Jumlah Kelas",
-    df["Medical Condition"].nunique()
+    "Jumlah Jenis Obat (Kelas)",
+    df["Medication"].nunique()
 )
 
 c3.metric(
@@ -60,7 +60,7 @@ fig = px.imshow(
 
 st.plotly_chart(
     fig,
-    width="stretch"
+    use_container_width=True
 )
 
 # =======================================
@@ -89,7 +89,7 @@ fig = px.bar(
 
 st.plotly_chart(
     fig,
-    width="stretch"
+    use_container_width=True
 )
 
 # =======================================
@@ -102,14 +102,14 @@ report_df = pd.DataFrame(report).transpose()
 
 st.dataframe(
     report_df,
-    width="stretch"
+    use_container_width=True
 )
 
 # =======================================
-# Prediksi
+# Prediksi Pasien (Bagian Rekomendasi Obat)
 # =======================================
 
-st.subheader("Prediksi Pasien")
+st.subheader("Simulasi Rekomendasi Obat Pasien")
 
 col1,col2 = st.columns(2)
 
@@ -140,17 +140,41 @@ insurance = col2.number_input(
     1
 )
 
-if st.button("Prediksi"):
+# Mapping nama penyakit ke encode angka
+kondisi_medis_dict = {
+    "Arthritis": 0,
+    "Asthma": 1,
+    "Cancer": 2,
+    "Diabetes": 3,
+    "Hypertension": 4,
+    "Obesity": 5
+}
 
-    hasil = model.predict(
+selected_condition = col2.selectbox(
+    "Kondisi Medis Pasien",
+    options=list(kondisi_medis_dict.keys())
+)
+
+# Ambil nilai angka hasil encode dari opsi yang dipilih
+condition_encoded = kondisi_medis_dict[selected_condition]
+
+if st.button("Rekomendasikan Obat"):
+
+    # PERBAIKAN: Ubah input menjadi Pandas DataFrame agar memiliki nama fitur yang valid
+    input_pasien = pd.DataFrame(
         [[
             age,
             billing,
             stay,
-            insurance
-        ]]
+            insurance,
+            condition_encoded
+        ]], 
+        columns=["Age", "Billing Amount", "Stay_Duration", "Insurance_Encoded", "Condition_Encoded"]
     )
 
+    # Melakukan prediksi dengan DataFrame baru
+    hasil = model.predict(input_pasien)
+
     st.success(
-        f"Prediksi Medical Condition : **{hasil[0]}**"
+        f"Rekomendasi Obat Berdasarkan Model : **{hasil[0]}**"
     )
