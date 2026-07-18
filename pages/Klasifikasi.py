@@ -1,3 +1,4 @@
+AKBARRR_CRASH_SENGALA_BIAR_RESET
 import streamlit as st
 import pandas as pd
 import plotly.express as px
